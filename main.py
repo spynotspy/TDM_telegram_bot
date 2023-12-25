@@ -14,7 +14,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, C
 from keyboards import admin_kb, user_kb, user_kb_edit, courier_kb_edit, help_kb_user_only, help_kb_courier_only
 from database import add_user, add_username, add_user_number, add_address, add_positive_gift, add_negative_gift, \
     add_courier, add_courier_name, add_courier_numb, retrieve_and_return_names, export_data_to_json, \
-    export_data_to_xlsx, check_user, check_courier, get_users_id, get_user_data_by_id, get_users_data_for_couriers
+    export_data_to_xlsx, check_user, check_courier, get_users_id, get_user_data_by_id, get_users_data_for_couriers, \
+    get_courier_data_by_id, add_courier_available_status, add_courier_delivery_status
 
 from TOKENS import ADMIN_ID, BOT_TOKEN
 from backup import upload_on_disk
@@ -158,6 +159,42 @@ async def add_name_courier(message: types.Message, state=FSMContext):
     await state.set_state(courier_reg.numb)
 
 
+@dp.callback_query(F.data == "data_for_couriers")
+async def members_list_for_couriers(call: types.CallbackQuery):
+    names, numbers, addresses = get_users_data_for_couriers()
+    for i in range(len(names)):
+        await call.message.answer(f"Имя: {names[i]}, Номер: {numbers[i]}, Адрес: {addresses[i]}")
+
+
+@dp.callback_query(F.data == "is_free")
+async def set_available_status(call: types.CallbackQuery):
+    courier_data = get_courier_data_by_id(call.message.chat.id)
+    if courier_data[2] == True:
+        add_courier_available_status(call.message, False)
+
+    elif courier_data[2] == False:
+        add_courier_available_status(call.message, True)
+
+    await call.message.answer("Статус изменён")
+
+
+@dp.callback_query(F.data == "delivery")
+async def set_available_status(call: types.CallbackQuery, state=FSMContext):
+    await call.message.answer(f"Опишите статус доставки: получен ли подарок, доставляется или доставлен.")
+    await state.set_state(courier_reg.delivery_status)
+
+
+@dp.message(courier_reg.delivery_status)
+async def add_name_courier(message: types.Message, state=FSMContext):
+    chat_id = message.chat.id
+    await state.update_data(delivery_status=message.text)
+    add_courier_delivery_status(message)
+    await bot.send_message(chat_id, "Отлично! Статус доставки обновлен.")
+    await state.clear()
+
+
+################################################################################################
+
 @dp.message(courier_reg.numb)
 async def add_numb_courier(message: types.Message, state=FSMContext):
     chat_id = message.chat.id
@@ -171,15 +208,6 @@ async def add_numb_courier(message: types.Message, state=FSMContext):
     upload_on_disk()
 
     # await state.set_state(courier_reg.is_available)
-
-
-################################################################################################
-
-@dp.callback_query(F.data == "data_for_couriers")
-async def members_list_for_couriers(call: types.CallbackQuery):
-    names, numbers, addresses = get_users_data_for_couriers()
-    for i in range(len(names)):
-        await call.message.answer(f"Имя: {names[i]}, Номер: {numbers[i]}, Адрес: {addresses[i]}")
 
 
 @dp.message(Command("help"))

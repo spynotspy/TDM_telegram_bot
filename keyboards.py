@@ -33,3 +33,7 @@ help_kb_user_only.row(types.InlineKeyboardButton(text="Список участн
 # клавиатура help для курьеров
 help_kb_courier_only = InlineKeyboardBuilder()
 help_kb_courier_only.row(types.InlineKeyboardButton(text="Список участников", callback_data="data_for_couriers"))
+help_kb_courier_only.add(
+    types.InlineKeyboardButton(text="Изменить статус (доступен для доставки или нет)", callback_data="is_free"))
+help_kb_courier_only.add(
+    types.InlineKeyboardButton(text="Изменить статус доставки", callback_data="delivery"))

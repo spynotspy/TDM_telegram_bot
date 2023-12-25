@@ -112,6 +112,20 @@ def add_courier_numb(message):
         session.commit()
 
 
+def add_courier_available_status(message, status):
+    user = session.query(Courier).filter_by(id=message.chat.id).first()
+    if user:
+        user.is_available = status
+        session.commit()
+
+
+def add_courier_delivery_status(message):
+    user = session.query(Courier).filter_by(id=message.chat.id).first()
+    if user:
+        user.delivery_status = message.text
+        session.commit()
+
+
 def retrieve_and_return_names():
     user_names = [user.name for user in session.query(User).all()]
     courier_names = [courier.name for courier in session.query(Courier).all()]
@@ -140,6 +154,17 @@ def get_user_data_by_id(user_id):
     user_gift_negative = [user.gift_negative for user in session.query(User).filter_by(id=user_id)]
 
     info = [user_name, user_number, user_address, user_gift_positive, user_gift_negative]
+
+    return info
+
+
+def get_courier_data_by_id(user_id):
+    courier_name = [courier.name for courier in session.query(Courier).filter_by(id=user_id)]
+    courier_number = [courier.number for courier in session.query(Courier).filter_by(id=user_id)]
+    courier_is_available = [courier.is_available for courier in session.query(Courier).filter_by(id=user_id)]
+    courier_delivery_status = [courier.delivery_status for courier in session.query(Courier).filter_by(id=user_id)]
+
+    info = [courier_name, courier_number, courier_is_available, courier_delivery_status]
 
     return info
 
