@@ -1,9 +1,5 @@
-from aiogram import Bot, types, Dispatcher, F
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardMarkup
+from aiogram import types
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 # Клавиатура для Админа
 admin_kb = InlineKeyboardBuilder()
