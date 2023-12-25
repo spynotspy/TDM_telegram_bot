@@ -1,13 +1,13 @@
 import json
 import shutil
 import os
+import pandas as pd
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base, sessionmaker
-import pandas as pd
 from openpyxl import Workbook
+from sqlalchemy import create_engine, Column, Integer, String, Boolean
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 tables = create_engine('sqlite:///mystery_santa.db')
 Base = declarative_base()
@@ -124,7 +124,15 @@ def get_users_id():
     return user_ids
 
 
-def get_user_data(user_id):
+def get_users_data_for_couriers():
+    user_name = [user.name for user in session.query(User).all()]
+    user_number = [user.number for user in session.query(User).all()]
+    user_address = [user.address for user in session.query(User).all()]
+
+    return user_name, user_number, user_address
+
+
+def get_user_data_by_id(user_id):
     user_name = [user.name for user in session.query(User).filter_by(id=user_id)]
     user_number = [user.number for user in session.query(User).filter_by(id=user_id)]
     user_address = [user.address for user in session.query(User).filter_by(id=user_id)]

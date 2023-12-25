@@ -26,6 +26,10 @@ user_kb_edit.add(types.InlineKeyboardButton(text="Изменить данные"
 courier_kb_edit = InlineKeyboardBuilder()
 courier_kb_edit.add(types.InlineKeyboardButton(text="Изменить данные", callback_data="courier"))
 
-#Клавиатура help
-help_kb = InlineKeyboardBuilder()
-help_kb.row(types.InlineKeyboardButton(text="Список участников", callback_data="members"))
+# Клавиатура help для пользователей
+help_kb_user_only = InlineKeyboardBuilder()
+help_kb_user_only.row(types.InlineKeyboardButton(text="Список участников", callback_data="members"))
+
+# клавиатура help для курьеров
+help_kb_courier_only = InlineKeyboardBuilder()
+help_kb_courier_only.row(types.InlineKeyboardButton(text="Список участников", callback_data="data_for_couriers"))
